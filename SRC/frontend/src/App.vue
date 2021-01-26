@@ -1,17 +1,33 @@
 <template>
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import axios from'axios'
 
 export default {
   name: 'App',
-  components: {
-    HelloWorld
+  data() {
+    return {
+      apiPath: "https://localhost:5001/api/values",
+    }
+  },
+  mounted() {
+    this.accessAPI();
+  },
+  methods: {
+    accessAPI(){
+      axios.get(this.apiPath)
+        .then(response => {
+          this.posts=response.data;
+        })
+        .catch(error => {
+          console.log('-----error-------');
+          console.log(error);
+        })
+    }
   }
 }
 </script>
