@@ -24,31 +24,20 @@ namespace Backend.Models
             ILiteCollection<Account> accounts = DataContext.accounts;
             if (showTransaction)
                 accounts.Include(x=> x.Transactions);
-            var account = accounts.FindById(accountId);
-            if (account == null)
-                throw new Exception("Account not found");
-            return account;
+            return accounts.FindById(accountId);
         }
 
-        public static void ImportAccountData(Account account)
+        public static int ImportAccountData(Account account)
         {
             if (GetAccount(account.Id) == null)
                 account = CreateAccount(account);
 
             List<Transaction> accountNewTransactions = account.Transactions;
             if (account.Transactions != null && account.Transactions.Any())
-                TransactionModel.ImportTransactions(account.Id, accountNewTransactions);
+            {
+                return TransactionModel.CreateTransactions(accountNewTransactions).Count();
+            }
+            return 0;
         }
-
-        public static void UpdateAccountTransactions(string accountId, List<Transaction> transactions)
-        {
-            var accounts = DataContext.accounts;
-            var account = GetAccount(accountId);
-            account.Transactions.AddRange(transactions);
-            accounts.Update(account);
-            // Index document using a document property
-            accounts.EnsureIndex(x => x.Id);
-        }
-
     }
 }

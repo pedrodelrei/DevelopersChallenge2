@@ -14,12 +14,8 @@ namespace Backend.Models
     {
         [BsonId]
         public string Id { get; set; }
-        [BsonIgnore]
-        public string BankId { get; set; }
-        [BsonIgnore]
-        public string AccountId { get; set; }
         public AccountTypeEnum Type { get; set; }
-        [BsonRef("transactions")]
+        [BsonIgnore]
         public List<Transaction> Transactions { get; set; }
 
         public Account(){}

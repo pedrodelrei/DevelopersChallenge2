@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using Backend.Models;
@@ -32,7 +33,6 @@ namespace Backend.Utils
             var result = new StringBuilder();
             using (var reader = new StreamReader(file.OpenReadStream()))
             {
-                
                 while (reader.Peek() >= 0)
                 {
                     var lineContent = reader.ReadLine();
@@ -60,7 +60,6 @@ namespace Backend.Utils
                             acctType = lineContent.Replace("<ACCTTYPE>", "");
                     }
                     #endregion
-                    
                     #region Reading Transactions
                         #region Transaction list start tag
                         if (lineContent.Contains("<BANKTRANLIST>"))
@@ -88,7 +87,7 @@ namespace Backend.Utils
                         {
                             if (!readingTransactions || !transactionStart)
                                 throw new Exception();
-                            transactions.Add(ParseTransaction(trnType, trnDate, trnAmt, memo));
+                            transactions.Add(ParseTransaction(account.Id, trnType, trnDate, trnAmt, memo));
                             trnType = trnDate = trnAmt = memo = null;
                             transactionStart = false;
                         }
@@ -146,23 +145,24 @@ namespace Backend.Utils
             return new Account(bankId, acctId, parsedAccountType);
         }
 
-        private static Transaction ParseTransaction(string tType, string tDate, string tAmt, string tMemo)
+        private static Transaction ParseTransaction(string accountId, string tType, string tDate, string tAmt, string tMemo)
         {
             tType = RemoveTabsAndSpaces(tType);
             tDate = RemoveTabsAndSpaces(tDate);
-            tAmt = RemoveTabsAndSpaces(tAmt);
+            tAmt = RemoveTabsAndSpaces(tAmt).Replace('.',',');
             tMemo = RemoveTabsAndSpaces(tMemo);
 
             TransactionTypeEnum parsedTransactionType = TransactionTypeEnum.ATM;
             float parsedAmount;
-            DateTime parsedDate;
+            DateTime parsedDate = DateTime.Now;
+            parsedDate = ParseDatetime(tDate);
 
             if (!Enum.TryParse(tType, out parsedTransactionType) ||
                     !float.TryParse(tAmt, out parsedAmount) ||
-                    !TryParseDatetime(out parsedDate) ||
                     string.IsNullOrEmpty(tMemo))
                 throw new Exception();
                 return new Transaction {
+                    AccountId = accountId,
                     Type = parsedTransactionType,
                     Value = parsedAmount,
                     Date = parsedDate,
@@ -170,12 +170,17 @@ namespace Backend.Utils
                 };
         }
 
-        private static bool TryParseDatetime(out DateTime val)
+        private static DateTime ParseDatetime(string rawDate)
         {
-            //OFX DateTime format is YYYYMMDDHHMMSS.XXX [gmt offset[:tz name]]
-            val = DateTime.Now;
-            return true;
-
+            if (string.IsNullOrEmpty(rawDate) || rawDate.Length < 14)
+            throw new Exception();
+            
+            CultureInfo ptBR = new CultureInfo("pt-BR");
+            var date = rawDate.Substring(0,14);
+            var parsedDateTime = DateTime.Now;
+            if (!DateTime.TryParseExact(date, "yyyyMMddHHmmss", ptBR, DateTimeStyles.None, out parsedDateTime))
+                throw new Exception();
+            return parsedDateTime;
         }
         private static string RemoveTabsAndSpaces(string str)
         {

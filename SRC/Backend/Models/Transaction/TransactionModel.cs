@@ -7,27 +7,37 @@ namespace Backend.Models
 {
     public class TransactionModel
     {
-        public static void ImportTransactions(string accountId, List<Transaction> transactions)
+        public static List<Transaction> CreateTransactions(List<Transaction> newTransactions)
         {
-            var oldTransactions = ListTransactions(accountId);
-            List<Transaction> newTransactions = new List<Transaction>();
-            foreach (var transaction in oldTransactions)
+            List<Transaction> added = new List<Transaction>();
+            var transactions = DataContext.transactions;
+            foreach (var transaction in newTransactions)
             {
-                var savedTransactions = transactions.Where(x => x.Date == transaction.Date && x.Value == transaction.Value);
-                newTransactions = transactions.Except(savedTransactions).ToList();
+                if (GetTransaction(transaction) == null)
+                {
+                    transactions.Insert(transaction);
+                    added.Add(transaction);
+                }
             }
+            return added;
+        }
 
-            DataContext.transactions.InsertBulk(newTransactions);
-            AccountModel.UpdateAccountTransactions(accountId, newTransactions);
+        public static Transaction GetTransaction(Transaction trans)
+        {
+            return DataContext.transactions.FindOne(x => x.AccountId == trans.AccountId && x.Value == trans.Value && x.Date == trans.Date);
         }
 
         public static IEnumerable<Transaction> ListTransactions(string accountId)
         {
-            var db = DataContext.db;
             var account = DataContext.accounts.Include(x=> x.Transactions).FindById(accountId);
             if (account == null)
                 throw new Exception("Account not found");
             return account.Transactions.ToList();
+        }
+
+        public static IEnumerable<Transaction> ListTransactions()
+        {
+            return DataContext.transactions.FindAll();
         }
     }
 }

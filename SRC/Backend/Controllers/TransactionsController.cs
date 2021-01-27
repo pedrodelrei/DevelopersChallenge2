@@ -15,46 +15,42 @@ namespace Backend.Controllers
     {
         // GET api/values
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        public ActionResult<IEnumerable<TransactionDTO>> Get()
         {
-        //    var asd = TransactionModel.ListTransactions();
-        //    var teste = asd.ToArray();
-            return new string[] { "value1", "value2" };
-        }
-
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
-        {
-            return "value";
+            return TransactionModel.ListTransactions().Select(x => new TransactionDTO(x)).ToList();
         }
 
         // POST api/values
         [HttpPost]
-        public void Post([FromForm] IFormFile file)
+        public int Post([FromForm] IFormFile file)
         {
             try
             {
                 var newAccount = OFXFileReader.ReadFile(file);
-                AccountModel.ImportAccountData(newAccount);
+                return AccountModel.ImportAccountData(newAccount);
             }
             catch (Exception)
             {
                 throw new System.Exception("File format error!");
             }
         }
+    }
 
-
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+    public class TransactionDTO
+    {
+        public int Id;
+        public string AccountId, Memo;
+        public string Value;
+        public string Date;
+        public string TransType;
+        public TransactionDTO (Transaction trans)
         {
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            Id = trans.Id;
+            AccountId = trans.AccountId.Replace('-', '/');
+            Memo = trans.Memo;
+            Value = trans.Value.ToString("c2");;
+            Date = trans.Date.ToString("dd'/'MM'/'yyyy HH:mm:ss");
+            TransType = trans.Type.ToString();
         }
     }
 }

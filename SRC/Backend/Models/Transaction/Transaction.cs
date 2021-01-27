@@ -11,7 +11,7 @@ namespace Backend.Models
     public class Transaction
     {
         public int Id { get; set; }
-        [BsonIgnore]
+        public string AccountId { get; set; }
         public TransactionTypeEnum Type { get; set; }
         public DateTime Date { get; set; }
         public float Value { get; set; }

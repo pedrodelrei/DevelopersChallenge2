@@ -55,6 +55,9 @@
       <span>Upload File</span>
     </v-tooltip>
       </v-col>
+      <v-col>
+        <span v-if="responseText">{{responseText}}</span>
+      </v-col>
     </v-row>
   </v-container>
 </template>
@@ -68,6 +71,7 @@
       selectedFile: null,
       isSelecting: false,
       defaultButtonText: 'Import OFX File',
+      responseText: null
     }),
   computed: {
     buttonText() {
@@ -85,6 +89,8 @@
     },
     submitFile() {
       let formData = new FormData();
+      let self = this;
+      self.isSelecting = true;
       formData.append('file', this.selectedFile);
       axios.post( 'https://localhost:5001/api/transactions',
         formData,
@@ -93,17 +99,27 @@
             'Content-Type': 'multipart/form-data'
           }
         }
-      ).then(function(){
-        console.log('SUCCESS!!');
+      ).then(function(response){
+        if (response.data == 0) {
+          self.responseText = "No new transactions were identified";
+        }
+          else {
+            self.responseText = "Success! " + response.data + " new transactions identified!";
+          }
+        self.isSelecting = false;
       })
-      .catch(function(){
-        console.log('FAILURE!!');
+      .catch(function(error){
+        self.responseText = error;
+        self.isSelecting = false;
       });
     },
     onFileChanged(e) {
       this.selectedFile = e.target.files[0]
-    }
+    },
     
+    clearSelectedFile() {
+      this.$refs.uploader.clear();
+    },
   }
-  }
+}
 </script>

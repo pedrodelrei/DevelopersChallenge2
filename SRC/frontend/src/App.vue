@@ -6,55 +6,54 @@
       dark
     >
       <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
-
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
+        <v-btn-toggle
+          mandatory
+        >
+        <v-btn
+          color="primary"
+          @click="changeView('trans')">
+          <span >View Transactions</span>
+        </v-btn>
+        
+      <v-spacer></v-spacer>
+        <v-btn
+          color="primary"
+          @click="changeView('upload')">
+          <span >Upload New OFX File</span>
+        </v-btn>
+        
+      </v-btn-toggle>
       </div>
 
-      <v-spacer></v-spacer>
-
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
+      
     </v-app-bar>
 
     <v-main>
-      <FileUpload/>
+      <TransactionList v-if="ShowTransactions"/>
+      <FileUpload v-if="!ShowTransactions"/>
     </v-main>
   </v-app>
 </template>
 
 <script>
+import TransactionList from './components/TransactionList';
 import FileUpload from './components/FileUpload';
 
 export default {
   name: 'App',
 
   components: {
-    FileUpload,
+    TransactionList,
+    FileUpload
   },
 
   data: () => ({
-    //
+    ShowTransactions: true
   }),
+  methods: {
+    changeView(view) {
+      this.ShowTransactions = view == "trans";
+    }
+  }
 };
 </script>
