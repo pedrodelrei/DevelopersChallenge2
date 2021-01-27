@@ -86,7 +86,7 @@
     submitFile() {
       let formData = new FormData();
       formData.append('file', this.selectedFile);
-      axios.post( 'https://localhost:5001/api/values',
+      axios.post( 'https://localhost:5001/api/transactions',
         formData,
         {
           headers: {
