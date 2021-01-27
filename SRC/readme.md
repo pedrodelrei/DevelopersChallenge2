@@ -42,7 +42,7 @@ A verificação de duplicidade da transação é feita com o método <b>GetTrans
     Vuetify
 
 <h1 align="center">Referência</h1>
-Para entender melhor a estrutura dos arquivos OFX, utilizou-se o seu manual de especificação: <a href="https://www.ofx.net/downloads/OFX%202.2.pdf"></a>
+Para entender melhor a estrutura dos arquivos OFX, utilizou-se o seu manual de especificação: https://www.ofx.net/downloads/OFX%202.2.pdf
 
 
 <h1 align="center">Observações</h1>
