@@ -3,7 +3,6 @@ using LiteDB;
 
 namespace Backend.Models
 {
-    
     public static partial class DataContext
     {
         public static ILiteCollection<Transaction> transactions = db.GetCollection<Transaction>("transactions");

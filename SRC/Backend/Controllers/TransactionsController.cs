@@ -13,14 +13,12 @@ namespace Backend.Controllers
     [ApiController]
     public class TransactionsController : ControllerBase
     {
-        // GET api/values
         [HttpGet]
         public ActionResult<IEnumerable<TransactionDTO>> Get()
         {
             return TransactionModel.ListTransactions().Select(x => new TransactionDTO(x)).ToList();
         }
 
-        // POST api/values
         [HttpPost]
         public int Post([FromForm] IFormFile file)
         {
@@ -35,7 +33,6 @@ namespace Backend.Controllers
             }
         }
     }
-
     public class TransactionDTO
     {
         public int Id;

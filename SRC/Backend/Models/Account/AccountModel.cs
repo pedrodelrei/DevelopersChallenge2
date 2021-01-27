@@ -9,12 +9,9 @@ namespace Backend.Models
     {
         public static Account CreateAccount(Account newAccount)
         {
-            // Get user collection
             var accounts = DataContext.accounts;
             if (accounts.FindById(newAccount.Id) != null)
                 throw new Exception("Account already exists");
-            
-            // Insert new user document (Id will be auto-incremented)
             accounts.Insert(newAccount);
             return newAccount;
         }

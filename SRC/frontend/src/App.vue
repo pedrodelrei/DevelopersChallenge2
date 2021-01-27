@@ -24,8 +24,6 @@
         
       </v-btn-toggle>
       </div>
-
-      
     </v-app-bar>
 
     <v-main>
