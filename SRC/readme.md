@@ -1,14 +1,14 @@
 <h1 align="center">Setup</h1>
 
 ## Backend
-dotnet restore
-dotnet build
-dotnet run
+    dotnet restore
+    dotnet build
+    dotnet run
 
 ## Frontend
-npm install
-npm run serve
-npm run build
+    npm install
+    npm run serve
+    npm run build
 
 <h1 align="center">Manual</h1>
 Para fazer upload de um arquivo, basta clicar na aba <b>UPLOAD NEW OFX FILE</b>, clicar no botão <b>Import OFX File</b>, selecionar o arquivo e clicar no botão ao lado (que será desbloqueado assim que o arquivo for selecionado).
